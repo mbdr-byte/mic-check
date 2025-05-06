@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mic Check</title>
+    <style>
+        /* Basic Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #2980b9, #27ae60);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        /* Main Application Window - Glassmorphic Style */
+        .app-window {
+            background-color: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(18px); 
+            border: 1px solid rgba(255, 255, 255, 0.32);
+            border-radius: 26px; 
+            box-shadow: 0 14px 50px rgba(8, 28, 62, 0.5); 
+            width: 100%;
+            max-width: 640px; 
+            min-height: 780px; 
+            display: flex;
+            flex-direction: column;
+            padding: 40px; 
+        }
+
+        .app-title {
+            font-size: 38px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 15px; /* Reduced margin to make space for blurb */
+            color: #ffffff;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.38);
+        }
+        .app-blurb { /* New style for the introductory blurb */
+            font-size: 15px;
+            font-weight: 400;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 30px; /* Space before the next section */
+            max-width: 80%; /* Keep it from being too wide */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Control Sections - Glassmorphic Style */
+        .control-section {
+            background-color: rgba(255, 255, 255, 0.16); 
+            border-radius: 22px;
+            padding: 26px; 
+            margin-bottom: 26px;
+            box-shadow: 0 7px 25px rgba(0,0,0,0.16);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .section-title-div { 
+            font-size: 21px;
+            font-weight: 500;
+            color: #fafafa; 
+            padding-bottom: 14px; 
+            margin-bottom: 22px; 
+            border-bottom: 1px solid rgba(255,255,255,0.3); 
+            width: 100%; 
+        }
+        
+        .subsection-heading {
+            font-size: 18px;
+            font-weight: 500;
+            color: #e8e8e8;
+            margin-top: 10px; 
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        .info-icon {
+            display: inline-block;
+            width: 18px; 
+            height: 18px;
+            border: 1.5px solid #e0e0e0; 
+            border-radius: 50%;
+            text-align: center;
+            line-height: 15px; 
+            font-size: 11px; 
+            font-weight: bold;
+            color: #e0e0e0;
+            margin-left: 8px;
+            cursor: help;
+            position: relative; 
+        }
+        .tooltip {
+            visibility: hidden;
+            width: 280px; 
+            background-color: rgba(20, 20, 20, 0.9); 
+            color: #f0f0f0; 
+            text-align: left;
+            border-radius: 8px; 
+            padding: 12px;
+            position: absolute;
+            z-index: 10; 
+            bottom: 130%; 
+            left: 50%;
+            margin-left: -140px; 
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, visibility 0s 0.3s linear; 
+            font-size: 13.5px; 
+            line-height: 1.6;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+        }
+        .tooltip::after { 
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px; 
+            border-width: 6px;
+            border-style: solid;
+            border-color: rgba(20, 20, 20, 0.9) transparent transparent transparent;
+        }
+        .info-icon:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        select { 
+            width: 100%;
+            padding: 15px 22px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background-color: rgba(0, 0, 0, 0.35);
+            color: #ffffff;
+            border-radius: 16px;
+            font-size: 18px;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f8f8f8'%3e%3cpath d='M7 10l5 5 5-5H7z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 22px center;
+            background-size: 1.25em;
+        }
+        select option {
+            background-color: #1a2b38;
+            color: #ffffff;
+        }
+
+
+        /* Button Styling */
+        .button-panel {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 26px;
+        }
+
+        .modern-button {
+            background-color: rgba(255, 255, 255, 0.28);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            padding: 15px 32px;
+            min-width: 180px;
+            border-radius: 32px;
+            cursor: pointer;
+            font-size: 19px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 5px 14px rgba(0,0,0,0.22);
+        }
+        .modern-button:disabled {
+            background-color: rgba(127, 140, 141, 0.3);
+            border-color: rgba(127, 140, 141, 0.15);
+            color: rgba(255,255,255,0.35);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .modern-button:not(:disabled):hover {
+            background-color: rgba(255, 255, 255, 0.38);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.28);
+        }
+        .modern-button:not(:disabled):active {
+            background-color: rgba(255, 255, 255, 0.22);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+            transform: translateY(1px);
+        }
+        .modern-button.recording {
+             background-color: rgba(231, 76, 60, 0.45);
+             border-color: rgba(231, 76, 60, 0.65);
+        }
+        .modern-button.recording:hover {
+             background-color: rgba(231, 76, 60, 0.55);
+        }
+
+
+        /* Audio Player Styling & Spectrogram Canvas */
+        .playback-section { }
+        .playback-status { 
+            text-align: center;
+            font-size: 15px;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+            min-height: 20px; 
+        }
+        #spectrogramContainer { 
+            position: relative;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        #spectrogramCanvas {
+            display: block; 
+            width: 100%; 
+            height: 150px; 
+            background-color: rgba(0,0,0,0.3); 
+            border-radius: 10px;
+        }
+        audio {
+            width: 100%;
+            outline: none;
+            background-color: transparent;
+            border: none;
+            margin-top: 10px; 
+        }
+
+        audio::-webkit-media-controls-panel {
+            background-color: rgba(0, 0, 0, 0.4); 
+            border: 1px solid rgba(255, 255, 255, 0.22); 
+            border-radius: 16px; 
+            padding: 14px 20px; 
+            color: #f8f9fa; 
+            transition: background-color 0.3s ease;
+        }
+         audio:hover::-webkit-media-controls-panel {
+            background-color: rgba(0, 0, 0, 0.5); 
+        }
+
+        audio::-webkit-media-controls-play-button,
+        audio::-webkit-media-controls-mute-button {
+            background-color: rgba(255, 255, 255, 0.25); 
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+            margin: 0 10px; 
+            padding: 10px;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white !important; 
+            filter: brightness(1.1); 
+        }
+        audio::-webkit-media-controls-play-button:hover,
+        audio::-webkit-media-controls-mute-button:hover {
+            background-color: rgba(255, 255, 255, 0.35);
+        }
+
+        audio::-webkit-media-controls-timeline {
+            background-color: rgba(255,255,255,0.2); 
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.25);
+            margin: 0 16px; 
+            height: 12px; 
+        }
+        audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px; 
+            height: 20px;
+            border-radius: 50%;
+            background: #ffffff; 
+            cursor: pointer;
+            border: 2px solid rgba(0,0,0,0.25); 
+            box-shadow: 0 0 10px rgba(255,255,255,0.5); 
+        }
+
+        audio::-webkit-media-controls-current-time-display,
+        audio::-webkit-media-controls-time-remaining-display {
+            color: #ffffff;
+            text-shadow: 0 1px 5px rgba(0,0,0,0.7); 
+            padding: 0 14px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        audio::-webkit-media-controls-volume-slider-container {
+            padding: 0 12px;
+        }
+        audio::-webkit-media-controls-volume-slider {
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.25);
+            height: 10px;
+        }
+        audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.2);
+        }
+
+
+        /* Visualizer */
+        #visualizerContainer {
+            width: 100%;
+            height: 100px;
+            background-color: rgba(0, 0, 0, 0.28);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 16px;
+            margin-bottom: 26px;
+            display: flex;
+            align-items: flex-end;
+            padding: 10px;
+            overflow: hidden;
+        }
+        .visualizer-bar {
+            flex-grow: 1;
+            background: linear-gradient(to top, rgba(46, 204, 113, 0.85), rgba(52, 152, 219, 0.85));
+            margin: 0 2.2px;
+            width: 2.5%; 
+            height: 0%;
+            border-radius: 6px 6px 0 0; 
+            transition: height 0.05s linear;
+        }
+
+        /* Footer Styling */
+        .footer-bar {
+            text-align: center;
+            padding: 15px;
+            font-size: 14px; 
+            color: #d0d0d0; 
+            margin-top: auto; 
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-window">
+        <h1 class="app-title">Mic Check</h1>
+        <p class="app-blurb">Test your microphone to make sure everyone can hear you clearly on video calls and recordings.</p>
+
+
+        <div class="control-section"> 
+            <div class="section-title-div">Select Microphone</div>
+            <select id="micSelect"></select>
+        </div>
+
+        <div id="visualizerContainer">
+            </div>
+
+        <div class="button-panel">
+            <button id="toggleRecordButton" class="modern-button">Record</button>
+        </div>
+
+        <div class="control-section playback-section">
+            <div class="section-title-div">Recording</div>
+            <div class="playback-status" id="playbackStatus">Ready</div> 
+            
+            <div class="subsection-heading">
+                Spectrogram
+                <span class="info-icon">i
+                    <span class="tooltip">This chart shows your sound's frequencies. Low pitches are at the bottom, high pitches at the top. Time moves from left to right. Brighter/warmer colors (like red) mean louder sounds for that frequency and time. The intensity (loudness) is shown on a logarithmic scale. This helps you see both very quiet and very loud sounds clearly. It's also important because low frequencies often have more power; logarithmic colors let you see details in the higher frequencies too, which might otherwise be hidden.</span>
+                </span>
+            </div>
+            <div id="spectrogramContainer">
+                 <canvas id="spectrogramCanvas"></canvas>
+            </div>
+
+            <div class="subsection-heading">Playback Controls</div>
+            <audio id="audioPlayback" controls></audio>
+        </div>
+        
+        <div class="footer-bar" id="footerBar">Megan Ruthven - April 2025</div> 
+    </div>
+
+    <script>
+        const micSelect = document.getElementById('micSelect');
+        const toggleRecordButton = document.getElementById('toggleRecordButton');
+        const audioPlayback = document.getElementById('audioPlayback');
+        const playbackStatus = document.getElementById('playbackStatus'); 
+        
+        const visualizerContainer = document.getElementById('visualizerContainer');
+        const NUM_BARS = 40;
+
+        const spectrogramCanvas = document.getElementById('spectrogramCanvas');
+        const spectrogramCtx = spectrogramCanvas.getContext('2d');
+
+        let mediaRecorder;
+        let audioChunks = [];
+        let recordAudioContext; 
+        let recordAnalyser; 
+        let recordSourceNode; 
+        let visualizerBars = [];
+        let recordVisualizerAnimationFrameId; 
+        
+        let isRecording = false;
+        let streamInstance = null;
+        let currentAudioBlob = null; 
+
+        const SPECTROGRAM_FFT_SIZE = 1024;
+
+        for (let i = 0; i < NUM_BARS; i++) {
+            const bar = document.createElement('div');
+            bar.classList.add('visualizer-bar');
+            visualizerContainer.appendChild(bar);
+            visualizerBars.push(bar);
+        }
+
+        function setupSpectrogramCanvas() {
+            spectrogramCanvas.width = Math.floor(spectrogramCanvas.clientWidth); 
+            spectrogramCanvas.height = Math.floor(spectrogramCanvas.clientHeight);
+            clearSpectrogram(); 
+        }
+        window.addEventListener('resize', setupSpectrogramCanvas);
+
+
+        async function getMicrophones() {
+            try {
+                let tempStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                tempStream.getTracks().forEach(track => track.stop());
+
+                const audioInputDevices = devices.filter(device => device.kind === 'audioinput');
+                
+                micSelect.innerHTML = ''; 
+                if (audioInputDevices.length === 0) {
+                    micSelect.innerHTML = '<option value="">No microphones found</option>';
+                    toggleRecordButton.disabled = true;
+                    playbackStatus.textContent = 'Error: No microphones found.';
+                    return;
+                }
+
+                const microphones = new Map(); 
+                let systemDefaultDeviceActualId = null;
+
+                const defaultDeviceInfo = audioInputDevices.find(d => d.deviceId === 'default');
+                if (defaultDeviceInfo) {
+                    const sameGroupDevice = audioInputDevices.find(d => d.groupId === defaultDeviceInfo.groupId && d.deviceId !== 'default' && d.label);
+                    if (sameGroupDevice) {
+                        systemDefaultDeviceActualId = sameGroupDevice.deviceId;
+                    } else { 
+                        const firstNonDefaultLabeled = audioInputDevices.find(d => d.deviceId !== 'default' && d.label);
+                        if (firstNonDefaultLabeled) {
+                            systemDefaultDeviceActualId = firstNonDefaultLabeled.deviceId;
+                        } else if (audioInputDevices.length > 1 && audioInputDevices[0].deviceId !== 'default') {
+                            systemDefaultDeviceActualId = audioInputDevices.find(d => d.deviceId !== 'default')?.deviceId || null;
+                        } else if (audioInputDevices.length === 1 && audioInputDevices[0].deviceId !== 'default') {
+                            systemDefaultDeviceActualId = audioInputDevices[0].deviceId; 
+                        }
+                    }
+                }
+
+
+                audioInputDevices.forEach((device, index) => {
+                    if (device.deviceId === 'default') return; 
+
+                    let label = device.label || `Microphone ${index + 1}`;
+                    const isDefault = device.deviceId === systemDefaultDeviceActualId;
+                    
+                    const baseLabel = label.replace(/\s*\((System )?Default\)\s*$/i, '').trim();
+
+                    if (microphones.has(device.deviceId)) { 
+                        if (isDefault && !microphones.get(device.deviceId).isSystemDefault) {
+                            microphones.get(device.deviceId).label = `${baseLabel} (System Default)`;
+                            microphones.get(device.deviceId).isSystemDefault = true;
+                        }
+                    } else { 
+                        microphones.set(device.deviceId, {
+                            label: isDefault ? `${baseLabel} (System Default)` : baseLabel,
+                            deviceId: device.deviceId,
+                            isSystemDefault: isDefault
+                        });
+                    }
+                });
+                
+                let defaultSelectedInList = false;
+                const sortedMicrophones = Array.from(microphones.values()).sort((a, b) => {
+                    if (a.isSystemDefault && !b.isSystemDefault) return -1;
+                    if (!a.isSystemDefault && b.isSystemDefault) return 1;
+                    return a.label.localeCompare(b.label);
+                });
+
+                sortedMicrophones.forEach(micInfo => {
+                    const option = document.createElement('option');
+                    option.value = micInfo.deviceId;
+                    option.text = micInfo.label;
+                    if (micInfo.isSystemDefault) {
+                        option.selected = true;
+                        defaultSelectedInList = true;
+                    }
+                    micSelect.appendChild(option);
+                });
+
+                if (!defaultSelectedInList && micSelect.options.length > 0) {
+                    micSelect.options[0].selected = true;
+                }
+
+                playbackStatus.textContent = 'Microphones loaded. Ready.';
+                toggleRecordButton.disabled = false;
+            } catch (err) {
+                console.error('Error accessing media devices.', err);
+                playbackStatus.textContent = 'Error: Mic access denied. Grant permission.';
+                toggleRecordButton.disabled = true;
+            }
+        }
+        
+        async function handleToggleRecord() {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                await startRecording();
+            }
+        }
+
+        async function startRecording() {
+            if (!micSelect.value && micSelect.options.length > 0 && micSelect.options[0].value !== "") {
+                micSelect.value = micSelect.options[0].value;
+            } else if (!micSelect.value || (micSelect.options.length > 0 && micSelect.options[0].value === "")) {
+                playbackStatus.textContent = 'Error: No microphone selected or available.';
+                return;
+            }
+            
+            clearSpectrogram(); 
+            currentAudioBlob = null; 
+
+            try {
+                streamInstance = await navigator.mediaDevices.getUserMedia({ 
+                    audio: { 
+                        deviceId: { exact: micSelect.value },
+                    },
+                    video: false 
+                });
+
+                audioChunks = [];
+                const options = { mimeType: 'audio/webm;codecs=opus' };
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options.mimeType = 'audio/webm'; 
+                    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                         delete options.mimeType; 
+                    }
+                }
+                mediaRecorder = new MediaRecorder(streamInstance, options);
+
+                recordAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+                recordAnalyser = recordAudioContext.createAnalyser();
+                recordSourceNode = recordAudioContext.createMediaStreamSource(streamInstance);
+                recordSourceNode.connect(recordAnalyser);
+
+                recordAnalyser.fftSize = 1024; 
+                recordAnalyser.smoothingTimeConstant = 0.3; 
+                const bufferLength = recordAnalyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength); 
+
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = async () => {
+                    isRecording = false;
+                    toggleRecordButton.textContent = 'Record';
+                    toggleRecordButton.classList.remove('recording');
+                    toggleRecordButton.disabled = false;
+                    micSelect.disabled = false;
+                    
+                    if(streamInstance) {
+                        streamInstance.getTracks().forEach(track => track.stop());
+                        streamInstance = null; 
+                    }
+                    
+                    playbackStatus.textContent = 'Processing audio...';
+                    currentAudioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+                    const audioUrl = URL.createObjectURL(currentAudioBlob);
+                    audioPlayback.src = audioUrl; 
+                    
+                    playbackStatus.textContent = 'Recording stopped. Playback available.';
+
+                    if (recordVisualizerAnimationFrameId) {
+                        cancelAnimationFrame(recordVisualizerAnimationFrameId);
+                    }
+                    visualizerBars.forEach(bar => bar.style.height = '0%');
+                    
+                    if(recordSourceNode) recordSourceNode.disconnect();
+                    if (recordAudioContext && recordAudioContext.state !== 'closed') {
+                        await recordAudioContext.close();
+                    }
+                    recordSourceNode = null; recordAnalyser = null; recordAudioContext = null;
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                toggleRecordButton.textContent = 'Stop';
+                toggleRecordButton.classList.add('recording');
+                micSelect.disabled = true;
+                playbackStatus.textContent = 'Recording...';
+                
+                drawRecordVisualizer(dataArray, bufferLength);
+
+            } catch (err) {
+                console.error('Error starting recording.', err);
+                playbackStatus.textContent = `Error: ${err.name} - ${err.message}`;
+                isRecording = false;
+                toggleRecordButton.textContent = 'Record';
+                toggleRecordButton.classList.remove('recording');
+                toggleRecordButton.disabled = false;
+                micSelect.disabled = false;
+                if (streamInstance) { 
+                    streamInstance.getTracks().forEach(track => track.stop());
+                    streamInstance = null;
+                }
+                 if (recordAudioContext && recordAudioContext.state !== 'closed') {
+                    await recordAudioContext.close();
+                }
+                recordSourceNode = null; recordAnalyser = null; recordAudioContext = null;
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop(); 
+                toggleRecordButton.disabled = true; 
+                playbackStatus.textContent = 'Stopping recording...';
+            } else { 
+                 isRecording = false;
+                 toggleRecordButton.textContent = 'Record';
+                 toggleRecordButton.classList.remove('recording');
+                 toggleRecordButton.disabled = false;
+                 micSelect.disabled = false;
+                 if (streamInstance) { 
+                    streamInstance.getTracks().forEach(track => track.stop());
+                    streamInstance = null;
+                }
+            }
+        }
+
+        function drawRecordVisualizer(dataArray, bufferLength) { 
+            if (!recordAnalyser) return; 
+            recordAnalyser.getByteFrequencyData(dataArray); 
+
+            for (let i = 0; i < NUM_BARS; i++) {
+                const dataIndex = Math.floor(i * (bufferLength / NUM_BARS));
+                const barHeight = (dataArray[dataIndex] / 255) * 100;
+                if (visualizerBars[i]) {
+                     visualizerBars[i].style.height = `${barHeight}%`;
+                }
+            }
+            recordVisualizerAnimationFrameId = requestAnimationFrame(() => drawRecordVisualizer(dataArray, bufferLength)); 
+        }
+        
+        function clearSpectrogram() {
+            if (spectrogramCtx) {
+                spectrogramCtx.fillStyle = 'rgba(0,0,0,0.3)'; 
+                spectrogramCtx.fillRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);
+            }
+        }
+
+        audioPlayback.onloadeddata = async () => { 
+            clearSpectrogram();
+            if (currentAudioBlob) {
+                await drawStaticSpectrogramWithScriptProcessor(currentAudioBlob);
+            }
+        };
+        
+        async function drawStaticSpectrogramWithScriptProcessor(audioBlobForSpectrogram) {
+            const canvas = spectrogramCanvas;
+            const sCtx = spectrogramCtx;
+            setupSpectrogramCanvas(); 
+
+            if (!audioBlobForSpectrogram) return;
+
+            const staticAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            try {
+                const arrayBuffer = await audioBlobForSpectrogram.arrayBuffer();
+                const audioBuffer = await staticAudioCtx.decodeAudioData(arrayBuffer);
+
+                const analyser = staticAudioCtx.createAnalyser();
+                analyser.fftSize = SPECTROGRAM_FFT_SIZE; 
+                analyser.smoothingTimeConstant = 0; 
+
+                const bufferSource = staticAudioCtx.createBufferSource();
+                bufferSource.buffer = audioBuffer;
+
+                const processorBufferSize = 4096; 
+                const scriptProcessor = staticAudioCtx.createScriptProcessor(processorBufferSize, 1, 1);
+
+                bufferSource.connect(analyser);
+                analyser.connect(scriptProcessor);
+                scriptProcessor.connect(staticAudioCtx.destination); 
+
+                const frequencyBinCount = analyser.frequencyBinCount;
+                const frequencyData = new Uint8Array(frequencyBinCount);
+                
+                let samplesProcessedSoFar = 0;
+                let nextXtoDraw = 0; 
+                const totalSamplesInAudio = audioBuffer.length;
+                const samplesPerPixelColumn = totalSamplesInAudio / canvas.width;
+
+
+                scriptProcessor.onaudioprocess = function(audioProcessingEvent) {
+                    if (nextXtoDraw >= canvas.width) { 
+                        if (bufferSource.playbackState === bufferSource.PLAYING_STATE || bufferSource.playbackState === undefined) { 
+                           try { bufferSource.stop(); } catch(e) { /* ignore */ }
+                        }
+                        return;
+                    }
+
+                    analyser.getByteFrequencyData(frequencyData);
+                    const samplesInThisBlock = audioProcessingEvent.inputBuffer.getChannelData(0).length;
+                    
+                    let targetEndXPixelForThisBlock = Math.min(canvas.width, Math.ceil((samplesProcessedSoFar + samplesInThisBlock) / samplesPerPixelColumn));
+                    
+                    if ((samplesProcessedSoFar + samplesInThisBlock) >= totalSamplesInAudio) {
+                        targetEndXPixelForThisBlock = canvas.width; 
+                    }
+
+                    for (let x = Math.floor(nextXtoDraw); x < Math.floor(targetEndXPixelForThisBlock); x++) {
+                        if (x >= canvas.width) break; 
+                        for (let i = 0; i < frequencyBinCount; i++) {
+                            const value = frequencyData[i];
+                            const normalizedValue = value / 255.0;
+                            
+                            const minLogVal = -3; 
+                            const maxLogVal = 0;  
+                            let logPercent = (Math.log10(normalizedValue + 0.001) - minLogVal) / (maxLogVal - minLogVal);
+                            logPercent = Math.max(0, Math.min(1, logPercent)); 
+
+                            const hue = 240 - (logPercent * 240); 
+                            const saturation = '100%';
+                            const lightness = (logPercent * 50) + 20 + '%'; 
+
+                            const barHeightOnCanvas = canvas.height / frequencyBinCount;
+                            const y = canvas.height - ((i + 1) * barHeightOnCanvas) ; 
+                            
+                            sCtx.fillStyle = `hsl(${hue}, ${saturation}, ${lightness})`;
+                            sCtx.fillRect(x, y, 1, Math.max(1, barHeightOnCanvas)); 
+                        }
+                    }
+                    nextXtoDraw = targetEndXPixelForThisBlock; 
+                    samplesProcessedSoFar += samplesInThisBlock;
+
+                    if (samplesProcessedSoFar >= totalSamplesInAudio) {
+                         if (bufferSource.playbackState === bufferSource.PLAYING_STATE || bufferSource.playbackState === undefined) {
+                           try { bufferSource.stop(); } catch(e) { /* ignore */ }
+                        }
+                    }
+                };
+                
+                bufferSource.onended = async () => {
+                    scriptProcessor.disconnect();
+                    analyser.disconnect();
+                    bufferSource.disconnect();
+                    if (staticAudioCtx.state !== 'closed') {
+                        await staticAudioCtx.close();
+                    }
+                };
+                bufferSource.start(0);
+
+            } catch (e) {
+                console.error("Error drawing static spectrogram:", e);
+                if (staticAudioCtx && staticAudioCtx.state !== 'closed') await staticAudioCtx.close();
+                clearSpectrogram(); 
+                sCtx.fillStyle = "rgba(255,255,255,0.7)";
+                sCtx.font = "12px Segoe UI";
+                sCtx.textAlign = "center";
+                sCtx.fillText("Error rendering spectrogram", canvas.width / 2, canvas.height / 2);
+            }
+        }
+
+        toggleRecordButton.addEventListener('click', handleToggleRecord);
+
+        getMicrophones();
+        setupSpectrogramCanvas(); 
+        toggleRecordButton.disabled = true; 
+        audioPlayback.src = ''; 
+    </script>
+</body>
+</html>
