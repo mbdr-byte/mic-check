@@ -4,6 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mic Check</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+    <!-- SEO and Social Media Meta Tags -->
+    <meta name="description" content="Test your microphone to make sure everyone can hear you clearly on video calls and recordings.">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mic-check.mbdr.ai"> 
+    <meta property="og:title" content="Mic Check - Test Your Microphone">
+    <meta property="og:description" content="Test your microphone to make sure everyone can hear you clearly on video calls and recordings.">
+    <meta property="og:image" content="assets/og.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://mic-check.mbdr.ai">
+    <meta property="twitter:title" content="Mic Check - Test Your Microphone">
+    <meta property="twitter:description" content="Test your microphone to make sure everyone can hear you clearly on video calls and recordings.">
+    <meta property="twitter:image" content="assets/og.png">
+
+    <!-- Google tag (gtag.js) - GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6P5YEMZ84D"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      // Set default consent to 'denied' before GA4 config
+      gtag('consent', 'default', {
+        'analytics_storage': 'denied',
+        'ad_storage': 'denied',
+        'wait_for_update': 500 // Milliseconds to wait for update before sending hits
+      });
+
+      gtag('config', 'G-6P5YEMZ84D');
+    </script>
+
     <style>
         /* Basic Reset */
         * {
@@ -338,6 +375,70 @@
             margin-top: auto; 
         }
 
+        /* Consent Banner Styling */
+        .consent-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(30, 30, 30, 0.85); /* Darker, slightly less transparent */
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 -8px 30px rgba(8, 28, 62, 0.45);
+            padding: 20px 30px;
+            z-index: 1000;
+            display: flex; /* Ensure banner is a flex container by default */
+            justify-content: space-between;
+            align-items: center;
+            color: #f0f0f0;
+            font-size: 14px;
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            transform: translateY(100%); /* Initially hidden (off-screen) */
+            opacity: 0; /* Initially hidden (transparent) */
+        }
+        .consent-banner.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .consent-banner-text {
+            margin-right: 20px;
+            line-height: 1.6;
+            flex-grow: 1; /* Allow text to take available space */
+        }
+        .consent-banner-text a {
+            color: #66bfff; /* Light blue for links */
+            text-decoration: none;
+        }
+        .consent-banner-text a:hover {
+            text-decoration: underline;
+        }
+        .consent-banner-buttons {
+            display: flex; /* Arrange buttons in a row */
+            flex-shrink: 0; /* Prevent button container from shrinking */
+        }
+        .consent-banner-buttons button {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 10px 20px;
+            border-radius: 18px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 10px;
+            transition: background-color 0.2s ease;
+        }
+        .consent-banner-buttons button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        .consent-banner-buttons button.accept {
+            background-color: rgba(46, 204, 113, 0.7); /* Greenish */
+            border-color: rgba(46, 204, 113, 0.8);
+        }
+        .consent-banner-buttons button.accept:hover {
+            background-color: rgba(46, 204, 113, 0.85);
+        }
+
     </style>
 </head>
 <body>
@@ -380,6 +481,17 @@
         <div class="footer-bar" id="footerBar">Megan Ruthven - April 2025</div> 
     </div>
 
+    <div class="consent-banner" id="consentBanner">
+        <div class="consent-banner-text">
+            This website uses cookies to enhance user experience and for analytics purposes. By clicking "Accept", you consent to the use of cookies.
+            <!-- You might want to add a link to a privacy policy page here -->
+        </div>
+        <div class="consent-banner-buttons">
+            <button id="declineConsentButton">Decline</button>
+            <button id="acceptConsentButton" class="accept">Accept</button>
+        </div>
+    </div>
+
     <script>
         const micSelect = document.getElementById('micSelect');
         const toggleRecordButton = document.getElementById('toggleRecordButton');
@@ -391,6 +503,15 @@
 
         const spectrogramCanvas = document.getElementById('spectrogramCanvas');
         const spectrogramCtx = spectrogramCanvas.getContext('2d');
+
+        // GA4 Event Helper
+        function sendGAEvent(eventName, eventParams) {
+            if (typeof gtag === 'function') {
+                gtag('event', eventName, eventParams);
+            } else {
+                console.warn('gtag function not found. Event not sent:', eventName, eventParams);
+            }
+        }
 
         let mediaRecorder;
         let audioChunks = [];
@@ -513,8 +634,18 @@
         
         async function handleToggleRecord() {
             if (isRecording) {
+                sendGAEvent('record_action', {
+                    'event_category': 'engagement',
+                    'event_label': 'Stop Recording Button',
+                    'action': 'stop_recording'
+                });
                 stopRecording();
             } else {
+                sendGAEvent('record_action', {
+                    'event_category': 'engagement',
+                    'event_label': 'Start Recording Button',
+                    'action': 'start_recording' 
+                });
                 await startRecording();
             }
         }
@@ -778,6 +909,71 @@
         setupSpectrogramCanvas(); 
         toggleRecordButton.disabled = true; 
         audioPlayback.src = ''; 
+
+        // Event listener for playback start
+        audioPlayback.addEventListener('play', function() {
+            sendGAEvent('playback_action', {
+                'event_category': 'engagement',
+                'event_label': 'Playback Started',
+                'action': 'play_pressed'
+            });
+        });
+
+        // Consent Banner Logic
+        const consentBanner = document.getElementById('consentBanner');
+        const acceptConsentButton = document.getElementById('acceptConsentButton');
+        const declineConsentButton = document.getElementById('declineConsentButton');
+        const consentKey = 'user_consent_preference_v1'; // Added _v1 for potential future changes
+
+        function setConsent(granted) {
+            const consentStatus = granted ? 'granted' : 'denied';
+            gtag('consent', 'update', {
+                'analytics_storage': consentStatus,
+                'ad_storage': consentStatus // Assuming ad_storage follows analytics_storage
+            });
+            localStorage.setItem(consentKey, consentStatus);
+            console.log(`Consent set to: ${consentStatus}`);
+            consentBanner.classList.remove('show');
+            // After the transition to hidden, set display: none
+            setTimeout(() => {
+                 if (!consentBanner.classList.contains('show')) { // Check if it's truly meant to be hidden
+                    consentBanner.style.display = 'none';
+                 }
+            }, 600); // Slightly longer than CSS transition (0.5s)
+        }
+
+        acceptConsentButton.addEventListener('click', () => {
+            setConsent(true);
+        });
+
+        declineConsentButton.addEventListener('click', () => {
+            setConsent(false);
+        });
+
+        function checkConsent() {
+            const savedConsent = localStorage.getItem(consentKey);
+            if (savedConsent) {
+                console.log(`Found saved consent: ${savedConsent}`);
+                // If consent choice already made, ensure banner is not displayed
+                consentBanner.style.display = 'none'; 
+            } else {
+                console.log('No saved consent found. Displaying banner.');
+                // Banner is display:flex by default (from CSS), but opacity 0 and translated out.
+                // We need to trigger the transition to opacity 1 and transformY(0).
+                setTimeout(() => {
+                    // The double rAF is to ensure the browser is ready for the transition after the timeout.
+                    requestAnimationFrame(() => { 
+                         requestAnimationFrame(() => { 
+                            consentBanner.classList.add('show');
+                         });
+                    });
+                }, 500); // Delay showing the banner slightly
+            }
+        }
+
+        // Initialize
+        checkConsent();
+
     </script>
 </body>
 </html>
