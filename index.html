@@ -374,6 +374,14 @@
             color: #d0d0d0; 
             margin-top: auto; 
         }
+        .footer-bar a {
+            color: #2980b9; /* Darker blue from background gradient */
+            text-decoration: none;
+            font-weight: 500; /* Slightly bolder to stand out a bit */
+        }
+        .footer-bar a:hover {
+            text-decoration: underline;
+        }
 
         /* Consent Banner Styling */
         .consent-banner {
@@ -432,11 +440,11 @@
             background-color: rgba(255, 255, 255, 0.3);
         }
         .consent-banner-buttons button.accept {
-            background-color: rgba(46, 204, 113, 0.7); /* Greenish */
-            border-color: rgba(46, 204, 113, 0.8);
+            background-color: rgba(46, 204, 113, 0.85); /* Match visualizer green */
+            border-color: rgba(46, 204, 113, 0.95); /* Slightly more opaque border */
         }
         .consent-banner-buttons button.accept:hover {
-            background-color: rgba(46, 204, 113, 0.85);
+            background-color: rgba(46, 204, 113, 0.95); /* Brighter green on hover */
         }
 
     </style>
@@ -478,7 +486,7 @@
             <audio id="audioPlayback" controls></audio>
         </div>
         
-        <div class="footer-bar" id="footerBar"><a href="https://mic-check.mbdr.ai">Megan Ruthven</a> - April 2025</div> 
+        <div class="footer-bar" id="footerBar"></div> 
     </div>
 
     <div class="consent-banner" id="consentBanner">
@@ -909,6 +917,11 @@
         setupSpectrogramCanvas(); 
         toggleRecordButton.disabled = true; 
         audioPlayback.src = ''; 
+
+        // Set footer year and text dynamically
+        const footerBar = document.getElementById('footerBar');
+        const currentYear = new Date().getFullYear();
+        footerBar.innerHTML = `© ${currentYear} <a href="https://mbdr.ai">Megan Ruthven</a> - Created April 2025`;
 
         // Event listener for playback start
         audioPlayback.addEventListener('play', function() {
