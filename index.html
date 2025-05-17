@@ -3,26 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mic Check</title>
+    <title>Mic Check - Test Your Microphone Quality for Video Calls</title>
+    <link rel="canonical" href="https://mic-check.mbdr.ai">
 
     <!-- Favicon -->
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
 
     <!-- SEO and Social Media Meta Tags -->
-    <meta name="description" content="Test your microphone to make sure everyone can hear you clearly on video calls and recordings.">
+    <meta name="description" content="Record and test your microphone quality for video calls, online meetings, and recordings. Instant playback with audio visualization to ensure clear audio.">
+    <meta name="keywords" content="microphone test, mic check, audio quality, video calls, online meetings, voice recording, audio visualization">
+    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://mic-check.mbdr.ai"> 
-    <meta property="og:title" content="Mic Check - Test Your Microphone">
-    <meta property="og:description" content="Test your microphone to make sure everyone can hear you clearly on video calls and recordings.">
+    <meta property="og:title" content="Mic Check - Test Your Microphone Quality">
+    <meta property="og:description" content="Record and test your microphone quality for video calls, online meetings, and recordings with instant playback and audio visualization.">
     <meta property="og:image" content="assets/og.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://mic-check.mbdr.ai">
-    <meta property="twitter:title" content="Mic Check - Test Your Microphone">
-    <meta property="twitter:description" content="Test your microphone to make sure everyone can hear you clearly on video calls and recordings.">
+    <meta property="twitter:title" content="Mic Check - Test Your Microphone Quality">
+    <meta property="twitter:description" content="Record and test your microphone quality for video calls, online meetings, and recordings with instant playback and audio visualization.">
     <meta property="twitter:image" content="assets/og.png">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Mic Check",
+      "url": "https://mic-check.mbdr.ai",
+      "description": "A web application that allows users to record and test their microphone quality for video calls, online meetings, and recordings with instant playback and audio visualization.",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Person",
+        "name": "Megan Ruthven"
+      },
+      "keywords": "microphone test, mic check, audio quality, video calls, online meetings, voice recording",
+      "inLanguage": "en",
+      "datePublished": "2025-04-01",
+      "featureList": "Microphone selection, Audio recording, Playback controls, Audio visualization, Spectrogram analysis"
+    }
+    </script>
 
     <!-- Google tag (gtag.js) - GA4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6P5YEMZ84D"></script>
@@ -375,12 +404,13 @@
             margin-top: auto; 
         }
         .footer-bar a {
-            color: #2980b9; /* Darker blue from background gradient */
+            color: #d8d8d8; /* Subtle grey, slightly darker than white text */
             text-decoration: none;
             font-weight: 500; /* Slightly bolder to stand out a bit */
         }
         .footer-bar a:hover {
             text-decoration: underline;
+            color: #ffffff;
         }
 
         /* Consent Banner Styling */
@@ -414,11 +444,12 @@
             flex-grow: 1; /* Allow text to take available space */
         }
         .consent-banner-text a {
-            color: #66bfff; /* Light blue for links */
+            color: #d8d8d8; /* Subtle grey, slightly darker than white text */
             text-decoration: none;
         }
         .consent-banner-text a:hover {
             text-decoration: underline;
+            color: #ffffff;
         }
         .consent-banner-buttons {
             display: flex; /* Arrange buttons in a row */
@@ -453,7 +484,7 @@
 
     <div class="app-window">
         <h1 class="app-title">Mic Check</h1>
-        <p class="app-blurb">Test your microphone to make sure everyone can hear you clearly on video calls and recordings.</p>
+        <p class="app-blurb">Test your microphone quality to ensure clear audio during video calls, online meetings, and recordings. Record your voice, analyze the audio visualization, and experience instant playback to identify and fix sound issues.</p>
 
 
         <div class="control-section"> 
@@ -491,12 +522,45 @@
 
     <div class="consent-banner" id="consentBanner">
         <div class="consent-banner-text">
-            This website uses cookies to enhance user experience and for analytics purposes. By clicking "Accept", you consent to the use of cookies.
-            <!-- You might want to add a link to a privacy policy page here -->
+            This website uses cookies for analytics purposes to help us understand how visitors use our service. We only collect anonymous usage data if you consent. All microphone recordings are processed entirely in your browser and are never sent to any server. By clicking "Accept", you consent to the use of analytics cookies.
+            <a href="https://github.com/mbdr-byte/mic-check" target="_blank" rel="noopener noreferrer">View Source Code</a> | 
+            <a href="javascript:void(0);" id="privacyPolicyLink">Privacy Policy</a>
         </div>
         <div class="consent-banner-buttons">
-            <button id="declineConsentButton">Decline</button>
+            <button id="declineConsentButton">Decline All</button>
             <button id="acceptConsentButton" class="accept">Accept</button>
+        </div>
+    </div>
+    
+    <!-- Privacy Policy Modal -->
+    <div id="privacyModal" style="display: none; position: fixed; z-index: 1100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px);">
+        <div style="background-color: rgba(40, 40, 40, 0.95); color: #f0f0f0; margin: 5% auto; padding: 30px; border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; width: 80%; max-width: 700px; max-height: 80vh; overflow-y: auto;">
+            <h2 style="margin-top: 0; color: #ffffff;">Privacy Policy</h2>
+            <p>Last Updated: April 2025</p>
+            
+            <h3>Overview</h3>
+            <p>Mic Check is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you visit our website.</p>
+            
+            <h3>Information We Collect</h3>
+            <p><strong>Microphone Recordings:</strong> All audio recording and processing happens entirely in your web browser. We do not collect, transmit, or store any of your microphone recordings on our servers.</p>
+            <p><strong>Analytics:</strong> With your consent, we collect anonymous usage data through Google Analytics 4 to understand how users interact with our website. This may include:</p>
+            <ul style="margin-left: 20px;">
+                <li>Pages visited and features used</li>
+                <li>Time spent on the site</li>
+                <li>Basic device information (browser type, operating system)</li>
+                <li>Approximate geographic location (country/region only)</li>
+            </ul>
+            
+            <h3>Cookies</h3>
+            <p>We use cookies solely for the purpose of remembering your consent preferences and for analytics if you've provided consent.</p>
+            
+            <h3>Your Choices</h3>
+            <p>You can control cookie preferences through the consent banner. Declining cookies will still allow you to use the site fully, but we won't collect any analytics data.</p>
+            
+            <h3>Contact</h3>
+            <p>For any questions about this Privacy Policy, please visit <a href="https://mbdr.ai" style="color: #d8d8d8;">mbdr.ai</a>.</p>
+            
+            <button id="closePrivacyModal" style="background-color: rgba(46, 204, 113, 0.85); color: white; padding: 10px 20px; border: none; border-radius: 18px; cursor: pointer; margin-top: 20px;">Close</button>
         </div>
     </div>
 
@@ -921,14 +985,52 @@
         // Set footer year and text dynamically
         const footerBar = document.getElementById('footerBar');
         const currentYear = new Date().getFullYear();
-        footerBar.innerHTML = `© ${currentYear} <a href="https://mbdr.ai">Megan Ruthven</a> - Created April 2025`;
+        footerBar.innerHTML = `© ${currentYear} <a href="https://mbdr.ai">Megan Ruthven</a> - Created April 2025 - <a href="https://github.com/mbdr-byte/mic-check">Source Code</a>`;
 
-        // Event listener for playback start
+        // Event listeners for audio playback
         audioPlayback.addEventListener('play', function() {
             sendGAEvent('playback_action', {
                 'event_category': 'engagement',
                 'event_label': 'Playback Started',
                 'action': 'play_pressed'
+            });
+        });
+        
+        audioPlayback.addEventListener('pause', function() {
+            sendGAEvent('playback_action', {
+                'event_category': 'engagement',
+                'event_label': 'Playback Paused',
+                'action': 'pause_pressed'
+            });
+        });
+        
+        audioPlayback.addEventListener('ended', function() {
+            sendGAEvent('playback_action', {
+                'event_category': 'engagement',
+                'event_label': 'Playback Completed',
+                'action': 'playback_ended'
+            });
+        });
+        
+        // Track microphone selection
+        micSelect.addEventListener('change', function() {
+            sendGAEvent('mic_selection', {
+                'event_category': 'settings',
+                'event_label': 'Microphone Changed',
+                'action': 'mic_selected',
+                'mic_label': this.options[this.selectedIndex].text
+            });
+        });
+        
+        // Track page view duration
+        let pageStartTime = Date.now();
+        window.addEventListener('beforeunload', function() {
+            const durationSeconds = Math.floor((Date.now() - pageStartTime) / 1000);
+            sendGAEvent('user_engagement', {
+                'event_category': 'engagement',
+                'event_label': 'Page View Duration',
+                'action': 'page_exit',
+                'duration_seconds': durationSeconds
             });
         });
 
@@ -986,7 +1088,67 @@
 
         // Initialize
         checkConsent();
-
+        
+        // Privacy Policy Modal Logic
+        const privacyPolicyLink = document.getElementById('privacyPolicyLink');
+        const privacyModal = document.getElementById('privacyModal');
+        const closePrivacyModal = document.getElementById('closePrivacyModal');
+        
+        privacyPolicyLink.addEventListener('click', function() {
+            privacyModal.style.display = 'block';
+            sendGAEvent('privacy_action', {
+                'event_category': 'navigation',
+                'event_label': 'Privacy Policy Opened',
+                'action': 'view_policy'
+            });
+        });
+        
+        closePrivacyModal.addEventListener('click', function() {
+            privacyModal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', function(event) {
+            if (event.target === privacyModal) {
+                privacyModal.style.display = 'none';
+            }
+        });
+        
+        // Additional GA4 Events for consent actions
+        acceptConsentButton.addEventListener('click', function() {
+            sendGAEvent('consent_action', {
+                'event_category': 'privacy',
+                'event_label': 'Consent Accepted',
+                'action': 'accept_cookies'
+            });
+        });
+        
+        declineConsentButton.addEventListener('click', function() {
+            sendGAEvent('consent_action', {
+                'event_category': 'privacy',
+                'event_label': 'Consent Declined',
+                'action': 'decline_cookies'
+            });
+        });
+        
+        // Track spectrogram viewing
+        audioPlayback.addEventListener('loadeddata', function() {
+            sendGAEvent('audio_processing', {
+                'event_category': 'feature_usage',
+                'event_label': 'Spectrogram Generated',
+                'action': 'view_spectrogram'
+            });
+        });
+        
+        // Track initial page load
+        document.addEventListener('DOMContentLoaded', function() {
+            sendGAEvent('page_view', {
+                'event_category': 'engagement',
+                'event_label': 'Initial Load',
+                'action': 'page_loaded',
+                'page_title': document.title
+            });
+        });
+        
     </script>
 </body>
 </html>
